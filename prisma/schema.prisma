@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  accounts  Account[]
+  cards     Card[]
+  loans     Loan[]
+}
+
+model Account {
+  id          String        @id @default(cuid())
+  userId      String
+  type        AccountType
+  bankName    String
+  accountNo   String
+  balance     Decimal       @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  transactions Transaction[]
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, accountNo])
+}
+
+model Card {
+  id             String        @id @default(cuid())
+  userId         String
+  type           CardType
+  bank           String
+  lastFourDigits String
+  cardNetwork    CardNetwork   @default(VISA)
+  dueDate        DateTime
+  billingCycle   Int
+  creditLimit    Decimal
+  currentBalance Decimal       @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  emiPurchases   EmiPurchase[]
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bank, lastFourDigits])
+}
+
+model Loan {
+  id          String    @id @default(cuid())
+  userId      String
+  type        LoanType
+  bankName    String
+  amount      Decimal
+  emiAmount   Decimal
+  startDate   DateTime
+  endDate     DateTime
+  accountId   String    // Account for auto-debit
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id          String          @id @default(cuid())
+  accountId   String
+  type        TransactionType
+  amount      Decimal
+  date        DateTime
+  category    String?
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  account     Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+}
+
+model EmiPurchase {
+  id          String    @id @default(cuid())
+  cardId      String
+  amount      Decimal
+  tenure      Int
+  startDate   DateTime
+  monthlyEmi  Decimal
+  remaining   Int
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  card        Card      @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
+
+enum AccountType {
+  SAVINGS
+  SALARY
+  CURRENT
+}
+
+enum CardType {
+  CREDIT
+  DEBIT
+}
+
+enum CardNetwork {
+  VISA
+  MASTERCARD
+  RUPAY
+  AMEX
+}
+
+enum LoanType {
+  CAR
+  PERSONAL
+  HOME
+  EDUCATION
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  EMI
+  TRANSFER
+} 

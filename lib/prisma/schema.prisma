@@ -1,0 +1,228 @@
+// This is your Prisma schema file
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String    // Hashed password
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[] // OAuth accounts
+  sessions      Session[]
+  
+  // Financial entities
+  bankAccounts  BankAccount[]
+  creditCards   CreditCard[]
+  loans         Loan[]
+  transactions  Transaction[]
+}
+
+// NextAuth.js Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Financial Models
+model BankAccount {
+  id              String        @id @default(cuid())
+  userId          String
+  accountNumber   String        @unique
+  bankName        String
+  accountType     AccountType
+  balance         Decimal       @default(0) @db.Decimal(10, 2)
+  currency        String        @default("INR")
+  isDefault       Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relations
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions    Transaction[]
+  linkedLoans     Loan[]        @relation("AutoDebitAccount")
+
+  @@index([userId])
+}
+
+model CreditCard {
+  id              String        @id @default(cuid())
+  userId          String
+  cardNumber      String        // Last 4 digits
+  cardName        String        // Name on card
+  bankName        String
+  cardType        CardType
+  creditLimit     Decimal       @db.Decimal(10, 2)
+  currentBalance  Decimal       @db.Decimal(10, 2)
+  dueDate         DateTime
+  statementDate   DateTime
+  minPayment      Decimal       @db.Decimal(10, 2)
+  apr             Decimal?      @db.Decimal(5, 2)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relations
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emiPurchases    EmiPurchase[]
+  transactions    Transaction[]
+
+  @@index([userId])
+}
+
+model Loan {
+  id              String      @id @default(cuid())
+  userId          String
+  loanType        LoanType
+  loanAmount      Decimal     @db.Decimal(10, 2)
+  interestRate    Decimal     @db.Decimal(5, 2)
+  tenure          Int         // in months
+  emiAmount       Decimal     @db.Decimal(10, 2)
+  startDate       DateTime
+  endDate         DateTime
+  remainingAmount Decimal     @db.Decimal(10, 2)
+  autodebitAccountId String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  autodebitAccount BankAccount? @relation("AutoDebitAccount", fields: [autodebitAccountId], references: [id])
+  transactions    Transaction[]
+
+  @@index([userId])
+}
+
+model Transaction {
+  id              String          @id @default(cuid())
+  userId          String
+  amount          Decimal         @db.Decimal(10, 2)
+  type            TransactionType
+  category        Category
+  description     String?
+  date            DateTime
+  status          TransactionStatus @default(COMPLETED)
+  reference       String?
+  
+  // Optional relations based on transaction type
+  bankAccountId   String?
+  creditCardId    String?
+  loanId          String?
+  
+  // Relations
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankAccount     BankAccount?    @relation(fields: [bankAccountId], references: [id])
+  creditCard      CreditCard?     @relation(fields: [creditCardId], references: [id])
+  loan            Loan?           @relation(fields: [loanId], references: [id])
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([date])
+}
+
+model EmiPurchase {
+  id              String    @id @default(cuid())
+  creditCardId    String
+  description     String
+  totalAmount     Decimal   @db.Decimal(10, 2)
+  emiAmount       Decimal   @db.Decimal(10, 2)
+  tenure          Int       // in months
+  remainingTenure Int
+  startDate       DateTime
+  endDate         DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  creditCard      CreditCard @relation(fields: [creditCardId], references: [id], onDelete: Cascade)
+
+  @@index([creditCardId])
+}
+
+enum AccountType {
+  SAVINGS
+  CURRENT
+  SALARY
+}
+
+enum CardType {
+  CREDIT
+  DEBIT
+}
+
+enum LoanType {
+  PERSONAL
+  HOME
+  CAR
+  EDUCATION
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  TRANSFER
+  EMI
+  BILL_PAYMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REVERSED
+}
+
+enum Category {
+  SALARY
+  FOOD
+  TRANSPORT
+  SHOPPING
+  ENTERTAINMENT
+  UTILITIES
+  RENT
+  EMI
+  INVESTMENT
+  TRANSFER
+  OTHER
+} 
