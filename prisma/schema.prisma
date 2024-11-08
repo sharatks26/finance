@@ -20,18 +20,41 @@ model User {
 }
 
 model Account {
-  id          String        @id @default(cuid())
-  userId      String
-  type        AccountType
-  bankName    String
-  accountNo   String
-  balance     Decimal       @default(0)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  transactions Transaction[]
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String    @id @default(cuid())
+  userId        String
+  bankName      String
+  accountNumber String
+  type          AccountType
+  balance       Float
+  
+  // Common optional fields
+  interestRate  Float?
+  currency      String    @default("USD")
+  
+  // Credit & Loan fields
+  creditLimit   Float?
+  dueDate       DateTime?
+  minimumPayment Float?
+  
+  // Loan specific fields
+  loanAmount    Float?
+  loanTerm      Int?      // in months
+  loanStartDate DateTime?
+  loanEndDate   DateTime?
+  
+  // Salary specific fields
+  employerName  String?
+  salaryDay     Int?
+  
+  // Status and metadata
+  isActive      Boolean   @default(true)
+  lastUpdated   DateTime  @updatedAt
+  createdAt     DateTime  @default(now())
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, accountNo])
+  @@unique([userId, accountNumber])
+  Transaction Transaction[]
 }
 
 model Card {
@@ -97,8 +120,10 @@ model EmiPurchase {
 
 enum AccountType {
   SAVINGS
+  CHECKING
   SALARY
-  CURRENT
+  CREDIT
+  LOAN
 }
 
 enum CardType {

@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "AccountType" AS ENUM ('SAVINGS', 'SALARY', 'CURRENT');
+CREATE TYPE "AccountType" AS ENUM ('SAVINGS', 'CHECKING', 'SALARY', 'CREDIT', 'LOAN');
 
 -- CreateEnum
 CREATE TYPE "CardType" AS ENUM ('CREDIT', 'DEBIT');
@@ -29,12 +29,24 @@ CREATE TABLE "User" (
 CREATE TABLE "Account" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "type" "AccountType" NOT NULL,
     "bankName" TEXT NOT NULL,
-    "accountNo" TEXT NOT NULL,
-    "balance" DECIMAL(65,30) NOT NULL DEFAULT 0,
+    "accountNumber" TEXT NOT NULL,
+    "type" "AccountType" NOT NULL,
+    "balance" DOUBLE PRECISION NOT NULL,
+    "interestRate" DOUBLE PRECISION,
+    "currency" TEXT NOT NULL DEFAULT 'USD',
+    "creditLimit" DOUBLE PRECISION,
+    "dueDate" TIMESTAMP(3),
+    "minimumPayment" DOUBLE PRECISION,
+    "loanAmount" DOUBLE PRECISION,
+    "loanTerm" INTEGER,
+    "loanStartDate" TIMESTAMP(3),
+    "loanEndDate" TIMESTAMP(3),
+    "employerName" TEXT,
+    "salaryDay" INTEGER,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "lastUpdated" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Account_pkey" PRIMARY KEY ("id")
 );
@@ -109,7 +121,7 @@ CREATE TABLE "EmiPurchase" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Account_userId_accountNo_key" ON "Account"("userId", "accountNo");
+CREATE UNIQUE INDEX "Account_userId_accountNumber_key" ON "Account"("userId", "accountNumber");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Card_userId_bank_lastFourDigits_key" ON "Card"("userId", "bank", "lastFourDigits");

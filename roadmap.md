@@ -6,7 +6,7 @@
 
 1. Project Setup
 
-   - Next.js 14 with App Router
+   - Next.js 15 with App Router
    - Tailwind CSS with shadcn/ui components
    - Dark mode support
    - Basic project structure
@@ -16,92 +16,102 @@
 2. Database Setup
 
    - PostgreSQL with Prisma ORM
-   - Database schema design
-   - Basic database helper functions
+   - Advanced schema design with proper relations
+   - Multi-currency support
+   - Account types (Savings, Checking, Credit, Loan, Salary)
+   - EMI and transaction tracking
+   - Database helper functions
    - Environment configuration
 
 3. UI Components
 
-   - Button component
-   - Card component
-   - Input component
-   - Landing page
-   - Dashboard layout
+   - Core components (Button, Card, Input, Select)
+   - Dynamic account form with conditional fields
+   - Dashboard layout and navigation
    - Summary components (Account, Credit Card, Loan)
    - Transaction list component
    - Upcoming payments component
-   - Dashboard navigation
-   - Account form component
+   - Form validation feedback
+   - Currency and interest rate inputs
 
 4. Authentication
 
-   - User registration
-   - Login functionality with form validation
-   - Protected routes setup
+   - User registration and login
+   - Form validation
+   - Protected routes
    - Session management with NextAuth
-   - Basic error handling
+   - Error handling
    - Extended user session types
 
 5. Data Management
-   - TanStack Query setup
-   - Query provider implementation
-   - Account API routes
-   - Basic CRUD operations for accounts
-   - Custom hooks for data fetching
+   - TanStack Query integration
+   - Query provider setup
+   - Account CRUD operations
+   - Custom data fetching hooks
+   - Advanced validation with Zod
+   - Multi-currency handling
+   - Interest calculations
 
 ### 🏗️ In Progress
 
 1. Core Features
 
-   - Transaction tracking implementation
-   - Credit card management system
-   - Basic loan tracking functionality
-   - Account balance updates
-   - Transaction categorization
+   - Transaction management system
+   - Credit card tracking
+   - Loan and EMI processing
+   - Real-time balance updates
+   - Smart categorization
+   - Salary account features
+   - Auto-debit handling
 
 2. Data Integration
-   - Data validation with Zod
-   - Error handling middleware
-   - Database connection optimization
-   - Real-time updates implementation
+   - Advanced error handling
+   - Connection optimization
+   - Real-time updates
+   - Currency conversion
+   - Transaction history
+   - Data validation middleware
 
 ### 📝 Next Up
 
 1. Dashboard Enhancements
 
-   - Real-time balance updates
-   - Transaction filters
-   - Search functionality
-   - Date range selection
+   - Advanced filtering system
+   - Global search
+   - Date range analytics
+   - Real-time updates
+   - Interactive charts
 
 2. Notifications
-   - Payment reminders
-   - Due date alerts
-   - Low balance warnings
-   - Email notifications with Resend
+   - Payment due reminders
+   - Balance alerts
+   - Email notifications
+   - Custom alert rules
 
 ### 🔜 Future Features
 
 1. Analytics
 
-   - Spending patterns
-   - Monthly reports
-   - Category-wise analysis
+   - Expense patterns
+   - Monthly summaries
+   - Category analysis
    - Budget tracking
+   - Spending insights
 
 2. Advanced Features
 
-   - Multiple currency support
-   - PDF statement generation
-   - Data export
-   - Mobile responsiveness
-   - PWA support
+   - Statement generation
+   - Data export tools
+   - Mobile optimization
+   - PWA capabilities
+   - Offline support
 
 3. Performance & Security
-   - API rate limiting
+   - Rate limiting
    - Data encryption
-   - Backup system
-   - Performance optimization
+   - Automated backups
+   - Performance monitoring
+   - Security auditing
 
 ## Technology Stack
 

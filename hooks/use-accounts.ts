@@ -15,7 +15,13 @@ export function useAccount() {
 
   const createAccount = useMutation({
     mutationFn: async (data: AccountFormValues) => {
-      const response = await axios.post('/api/accounts', data)
+      const formattedData = {
+        ...data,
+        dueDate: data.dueDate?.toISOString(),
+        loanStartDate: data.loanStartDate?.toISOString(),
+        loanEndDate: data.loanEndDate?.toISOString(),
+      }
+      const response = await axios.post('/api/accounts', formattedData)
       return response.data
     },
     onSuccess: () => {
@@ -25,7 +31,13 @@ export function useAccount() {
 
   const updateAccount = useMutation({
     mutationFn: async (data: AccountFormValues) => {
-      const response = await axios.patch('/api/accounts', data)
+      const formattedData = {
+        ...data,
+        dueDate: data.dueDate?.toISOString(),
+        loanStartDate: data.loanStartDate?.toISOString(),
+        loanEndDate: data.loanEndDate?.toISOString(),
+      }
+      const response = await axios.patch('/api/accounts', formattedData)
       return response.data
     },
     onSuccess: () => {

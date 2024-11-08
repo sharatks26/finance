@@ -16,7 +16,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <div className="text-xl font-semibold">Finance Tracker</div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground">{user?.name}</span>
-          <Button variant="ghost" size="icon" onClick={() => signOut()}>
+          <Button variant="ghost" size="sm" onClick={() => signOut()}>
             <LogOut className="h-5 w-5" />
           </Button>
         </div>

@@ -17,7 +17,7 @@ export default async function AccountsPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {accounts.map((account: Account) => (
-          <Card key={account.id} className="p-4">
+          <Card key={account.bankName} className="p-4">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="font-semibold">{account.bankName}</h2>
