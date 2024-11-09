@@ -20,6 +20,7 @@ import {
 import { useAccount } from '@/hooks/use-accounts'
 import { accountSchema, type AccountFormValues } from '@/lib/validators/account'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -29,6 +30,7 @@ interface AccountFormProps {
 }
 
 export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
+  const router = useRouter()
   const { createAccount, updateAccount } = useAccount()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -40,6 +42,8 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
       type: 'SAVINGS',
       balance: 0,
       accountNumber: '',
+      currency: 'INR',
+      interestRate: 0,
     },
   })
 
@@ -52,7 +56,16 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
         await updateAccount(data)
       } else {
         await createAccount(data)
+        form.reset({
+          bankName: '',
+          type: 'SAVINGS',
+          balance: 0,
+          accountNumber: '',
+          currency: 'INR',
+          interestRate: 0,
+        })
       }
+      router.refresh()
       onSuccess?.()
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to save account')
@@ -67,7 +80,7 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
         {error && <div className="text-sm text-red-500 font-medium">{error}</div>}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -134,8 +147,8 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
                   <Input
                     {...field}
                     type="number"
-                    step="0.01"
-                    placeholder="0.00"
+                    step="1000"
+                    placeholder="1000"
                     onChange={(e) => field.onChange(Number(e.target.value))}
                   />
                 </FormControl>
@@ -156,11 +169,11 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
                       <SelectValue placeholder="Select currency" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent defaultValue="INR">
+                    <SelectItem value="INR">INR</SelectItem>
                     <SelectItem value="USD">USD</SelectItem>
                     <SelectItem value="EUR">EUR</SelectItem>
                     <SelectItem value="GBP">GBP</SelectItem>
-                    <SelectItem value="INR">INR</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -178,9 +191,10 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
                   <Input
                     {...field}
                     type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    step="0.1"
+                    placeholder="0.0"
+                    value={field.value || 0}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -299,7 +313,11 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
                   <FormItem>
                     <FormLabel>Employer Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter employer name" />
+                      <Input
+                        {...field}
+                        placeholder="Enter employer name"
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
