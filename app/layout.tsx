@@ -2,6 +2,7 @@ import { AuthProvider } from '@/components/providers/auth-provider'
 import QueryProvider from '@/components/providers/query-provider'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 const geistSans = localFont({
@@ -31,6 +32,7 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>{children}</AuthProvider>
         </QueryProvider>
+        <Toaster />
       </body>
     </html>
   )

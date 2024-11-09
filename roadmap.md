@@ -47,13 +47,26 @@
    - Extended user session types
 
 5. Data Management
+
    - TanStack Query integration
    - Query provider setup
    - Account CRUD operations
+     - List all accounts
+     - Create new account
+     - Delete account functionality
    - Custom data fetching hooks
    - Advanced validation with Zod
    - Multi-currency handling
    - Interest calculations
+
+6. Account Management Features
+   - Account listing page with grid layout
+   - Create account form with validation
+   - Delete account with confirmation
+   - Account type selection (Savings, Salary)
+   - Basic account details display
+   - Account balance tracking
+   - Bank name and account type indicators
 
 ### 🏗️ In Progress
 
@@ -79,6 +92,7 @@
    - Dynamic auto-debit handling
 
 3. Data Integration
+
    - Type-safe API endpoints
    - Advanced error handling
    - Connection optimization
@@ -86,6 +100,14 @@
    - Currency conversion
    - Transaction history
    - Data validation middleware
+
+4. Account Management Enhancement
+   - Account update functionality
+   - Detailed account view
+   - Transaction history per account
+   - Balance history tracking
+   - Account statistics
+   - Account search and filtering
 
 ### 📝 Next Up
 
@@ -110,11 +132,20 @@
    - Custom widget system
 
 3. Notifications
+
    - Dynamic notification templates
    - Configurable alert rules
    - Custom reminder system
    - Multi-channel notifications
    - Alert priority management
+
+4. Account Features Enhancement
+   - Account statement generation
+   - Transaction import/export
+   - Account sharing capabilities
+   - Account categories and tags
+   - Account status tracking
+   - Balance alerts and notifications
 
 ### 🔜 Future Features
 

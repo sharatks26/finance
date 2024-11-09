@@ -5,7 +5,11 @@ import axios from 'axios'
 export function useAccount() {
   const queryClient = useQueryClient()
 
-  const { data: accounts, isLoading } = useQuery({
+  const {
+    data: accounts,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['accounts'],
     queryFn: async () => {
       const response = await axios.get('/api/accounts')
@@ -45,10 +49,22 @@ export function useAccount() {
     },
   })
 
+  const deleteAccountMutation = useMutation({
+    mutationFn: async (accountId: string) => {
+      await axios.delete(`/api/accounts/${accountId}`)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+    },
+  })
+
   return {
+    error,
     accounts,
     isLoading,
     createAccount: createAccount.mutateAsync,
     updateAccount: updateAccount.mutateAsync,
+    deleteAccount: deleteAccountMutation.mutate,
+    isDeletingAccount: deleteAccountMutation.isPending,
   }
 }

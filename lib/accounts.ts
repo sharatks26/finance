@@ -113,3 +113,14 @@ export async function updateAccount(data: AccountFormValues & { id: string }) {
     throw error
   }
 }
+
+export async function deleteAccount(accountId: string) {
+  try {
+    const deletedAccount = await prisma.account.delete({
+      where: { id: accountId },
+    })
+    return deletedAccount
+  } catch (error) {
+    throw error
+  }
+}
