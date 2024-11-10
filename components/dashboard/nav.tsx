@@ -31,10 +31,16 @@ const navItems = [
     href: '/analytics',
     icon: BarChart3,
   },
+  {
+    title: 'Transactions',
+    href: '/transactions',
+    icon: Wallet,
+  },
 ]
 
 export function DashboardNav() {
   const pathname = usePathname()
+  // const router = useRouter()
 
   return (
     <nav className="w-64 border-r bg-card px-3 py-4">

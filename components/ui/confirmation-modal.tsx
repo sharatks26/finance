@@ -1,14 +1,14 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogAction,
+  DialogCancel,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Loader2 } from 'lucide-react'
 
 interface ConfirmationModalProps {
@@ -33,19 +33,19 @@ export function ConfirmationModal({
   isLoading = false,
 }: ConfirmationModalProps) {
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel asChild>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogCancel asChild>
             <Button variant="secondary" disabled={isLoading}>
               {cancelText}
             </Button>
-          </AlertDialogCancel>
-          <AlertDialogAction asChild>
+          </DialogCancel>
+          <DialogAction asChild>
             <Button
               variant="default"
               onClick={onConfirm}
@@ -55,9 +55,9 @@ export function ConfirmationModal({
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {confirmText}
             </Button>
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </DialogAction>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
