@@ -5,7 +5,7 @@ export async function getAccountsByUserId(userId: string) {
   return prisma.account.findMany({
     where: { userId },
     include: {
-      transactions: {
+      Transaction: {
         orderBy: { date: 'desc' },
         take: 5,
       },
