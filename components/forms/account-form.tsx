@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { useAccount } from '@/hooks/use-accounts'
-import { ACCOUNT_TYPES, COMMON_FIELDS } from '@/lib/config/account-fields'
+import { ACCOUNT_TYPES, COMMON_FIELDS, type FieldConfig } from '@/lib/config/account-fields'
 import { accountSchema, type AccountFormValues } from '@/lib/validators/account'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -14,6 +14,16 @@ import { DynamicField } from './account/dynamic-field'
 interface AccountFormProps {
   initialData?: AccountFormValues
   onSuccess?: () => void
+}
+
+// Helper type to ensure field names match AccountFormValues
+type AccountField = Omit<FieldConfig, 'name'> & {
+  name: keyof AccountFormValues
+}
+
+// Type guard to ensure field names are valid keys of AccountFormValues
+function isValidAccountField(field: FieldConfig): field is AccountField {
+  return field.name in accountSchema.shape
 }
 
 export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
@@ -62,14 +72,16 @@ export function AccountForm({ initialData, onSuccess }: AccountFormProps) {
         {error && <div className="text-sm text-red-500 font-medium">{error}</div>}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {COMMON_FIELDS.map((field) => (
-            <DynamicField key={field.name} field={field} form={form} />
+          {COMMON_FIELDS.filter(isValidAccountField).map((field) => (
+            <DynamicField<AccountFormValues> key={field.name} field={field} form={form} />
           ))}
 
           {accountType &&
-            ACCOUNT_TYPES[accountType]?.fields.map((field) => (
-              <DynamicField key={field.name} field={field} form={form} />
-            ))}
+            ACCOUNT_TYPES[accountType]?.fields
+              .filter(isValidAccountField)
+              .map((field) => (
+                <DynamicField<AccountFormValues> key={field.name} field={field} form={form} />
+              ))}
         </div>
 
         <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>

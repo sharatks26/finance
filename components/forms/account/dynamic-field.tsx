@@ -7,17 +7,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { FieldConfig } from '@/lib/config/account-fields'
-import { AccountFormValues } from '@/lib/validators/account'
-import { UseFormReturn } from 'react-hook-form'
+import { FieldType } from '@/lib/config/account-fields'
+import { Path, UseFormReturn } from 'react-hook-form'
 
-interface DynamicFieldProps {
-  field: FieldConfig
-  form: UseFormReturn<AccountFormValues>
+// Generic interface for field configuration
+interface GenericFieldConfig<T> {
+  name: keyof T
+  label: string
+  type: FieldType
+  placeholder?: string
+  step?: string
+  min?: number
+  max?: number
+  options?: { label: string; value: string }[]
 }
 
-export function DynamicField({ field, form }: DynamicFieldProps) {
-  const getInputValue = (fieldType: FieldConfig['type'], value: unknown): string => {
+interface DynamicFieldProps<T extends Record<string, unknown>> {
+  field: GenericFieldConfig<T>
+  form: UseFormReturn<T>
+}
+
+export function DynamicField<T extends Record<string, unknown>>({
+  field,
+  form,
+}: DynamicFieldProps<T>) {
+  const getInputValue = (fieldType: FieldType, value: unknown): string => {
     if (fieldType === 'date' && value instanceof Date) {
       return value.toISOString().split('T')[0]
     }
@@ -30,7 +44,7 @@ export function DynamicField({ field, form }: DynamicFieldProps) {
   return (
     <FormField
       control={form.control}
-      name={field.name}
+      name={field.name as Path<T>}
       render={({ field: formField }) => (
         <FormItem>
           <FormLabel>{field.label}</FormLabel>

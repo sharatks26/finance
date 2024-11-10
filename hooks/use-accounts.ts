@@ -60,7 +60,7 @@ export function useAccount() {
 
   return {
     error,
-    accounts,
+    accounts: accounts || [],
     isLoading,
     createAccount: createAccount.mutateAsync,
     updateAccount: updateAccount.mutateAsync,

@@ -48,7 +48,7 @@ export default function AccountsPage() {
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {accounts.map((account: Account, index: number) => (
             <AccountCard
-              key={account.bankName}
+              key={account.id}
               account={account}
               index={index}
               onDeleteClick={handleDeleteClick}

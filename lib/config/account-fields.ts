@@ -1,10 +1,9 @@
 import { z } from 'zod'
-import { AccountFormValues } from '../validators/account'
 
 export type FieldType = 'text' | 'number' | 'date' | 'select'
 
 export interface FieldConfig {
-  name: keyof AccountFormValues
+  name: string
   label: string
   type: FieldType
   placeholder?: string
@@ -139,3 +138,40 @@ export const ACCOUNT_TYPES: Record<string, AccountTypeConfig> = {
     ],
   },
 }
+
+export const TRANSACTION_FIELDS: FieldConfig[] = [
+  {
+    name: 'description',
+    label: 'Description',
+    type: 'text',
+    placeholder: 'Enter description',
+  },
+  {
+    name: 'type',
+    label: 'Type',
+    type: 'select',
+    options: [
+      { label: 'Credit', value: 'CREDIT' },
+      { label: 'Debit', value: 'DEBIT' },
+      { label: 'Transfer', value: 'TRANSFER' },
+    ],
+  },
+  {
+    name: 'category',
+    label: 'Category',
+    type: 'select',
+    placeholder: 'Select category',
+    options: [
+      { label: 'Food', value: 'FOOD' },
+      { label: 'Shopping', value: 'SHOPPING' },
+      { label: 'Transport', value: 'TRANSPORT' },
+    ],
+  },
+  {
+    name: 'account',
+    label: 'Account',
+    type: 'select',
+    placeholder: 'Select account',
+    options: [],
+  },
+] as const
