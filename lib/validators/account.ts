@@ -43,11 +43,20 @@ export type Account = z.infer<typeof accountDbSchema>
 
 const transactionBaseSchema = {
   description: z.string().optional(),
-  type: z.enum(['CREDIT', 'DEBIT']),
+  type: z.enum(['CREDIT', 'DEBIT', 'TRANSFER']),
   category: z.enum(['FOOD', 'SHOPPING', 'TRANSPORT']).optional(),
+  amount: z.number().min(0),
   account: z.string().optional(),
+  toAccount: z.string().optional(),
 }
 
 export const transactionSchema = z.object(transactionBaseSchema)
 
-export type TransactionFormValues = z.infer<typeof transactionSchema>
+export type TransactionFormValues = {
+  description: string
+  type: 'CREDIT' | 'DEBIT' | 'TRANSFER'
+  category?: 'FOOD' | 'SHOPPING' | 'TRANSPORT'
+  amount: number
+  account: string
+  toAccount?: string
+}

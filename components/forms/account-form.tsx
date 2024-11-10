@@ -3,7 +3,8 @@
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { useAccount } from '@/hooks/use-accounts'
-import { ACCOUNT_TYPES, COMMON_FIELDS, type FieldConfig } from '@/lib/config/account-fields'
+import { ACCOUNT_TYPES, COMMON_FIELDS } from '@/lib/config/account-fields'
+import { AccountFieldConfig } from '@/lib/types/form-fields'
 import { accountSchema, type AccountFormValues } from '@/lib/validators/account'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -16,13 +17,8 @@ interface AccountFormProps {
   onSuccess?: () => void
 }
 
-// Helper type to ensure field names match AccountFormValues
-type AccountField = Omit<FieldConfig, 'name'> & {
-  name: keyof AccountFormValues
-}
-
 // Type guard to ensure field names are valid keys of AccountFormValues
-function isValidAccountField(field: FieldConfig): field is AccountField {
+function isValidAccountField(field: AccountFieldConfig): boolean {
   return field.name in accountSchema.shape
 }
 

@@ -7,23 +7,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { FieldType } from '@/lib/config/account-fields'
+import {
+  DateField,
+  FieldConfig,
+  NumberField,
+  SelectField,
+  TextField,
+} from '@/lib/types/form-fields'
 import { Path, UseFormReturn } from 'react-hook-form'
 
-// Generic interface for field configuration
-interface GenericFieldConfig<T> {
-  name: keyof T
-  label: string
-  type: FieldType
-  placeholder?: string
-  step?: string
-  min?: number
-  max?: number
-  options?: { label: string; value: string }[]
-}
-
 interface DynamicFieldProps<T extends Record<string, unknown>> {
-  field: GenericFieldConfig<T>
+  field: FieldConfig<T>
   form: UseFormReturn<T>
 }
 
@@ -31,14 +25,48 @@ export function DynamicField<T extends Record<string, unknown>>({
   field,
   form,
 }: DynamicFieldProps<T>) {
-  const getInputValue = (fieldType: FieldType, value: unknown): string => {
-    if (fieldType === 'date' && value instanceof Date) {
+  // Type guard functions
+  const isNumberField = (field: FieldConfig<T>): field is NumberField<T> => field.type === 'number'
+  const isDateField = (field: FieldConfig<T>): field is DateField<T> => field.type === 'date'
+  const isSelectField = (field: FieldConfig<T>): field is SelectField<T> => field.type === 'select'
+  const isTextField = (field: FieldConfig<T>): field is TextField<T> => field.type === 'text'
+
+  const getInputValue = (value: unknown): string => {
+    if (value instanceof Date) {
       return value.toISOString().split('T')[0]
     }
     if (typeof value === 'number') {
       return value.toString()
     }
     return (value as string) || ''
+  }
+
+  const getInputProps = () => {
+    if (isNumberField(field)) {
+      return {
+        type: 'number',
+        step: field.step,
+        min: field.min,
+        max: field.max,
+        placeholder: field.placeholder,
+      }
+    }
+    if (isDateField(field)) {
+      return {
+        type: 'date',
+        min: field.min,
+        max: field.max,
+      }
+    }
+    if (isTextField(field)) {
+      return {
+        type: 'text',
+        placeholder: field.placeholder,
+        minLength: field.minLength,
+        maxLength: field.maxLength,
+      }
+    }
+    return {}
   }
 
   return (
@@ -49,16 +77,17 @@ export function DynamicField<T extends Record<string, unknown>>({
         <FormItem>
           <FormLabel>{field.label}</FormLabel>
           <FormControl>
-            {field.type === 'select' ? (
+            {isSelectField(field) ? (
               <Select
                 onValueChange={formField.onChange}
                 defaultValue={String(formField.value || '')}
+                disabled={field.disabled}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={field.placeholder} />
                 </SelectTrigger>
                 <SelectContent>
-                  {field.options?.map((option) => (
+                  {field.options.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -67,21 +96,17 @@ export function DynamicField<T extends Record<string, unknown>>({
               </Select>
             ) : (
               <Input
-                value={getInputValue(field.type, formField.value)}
+                {...getInputProps()}
+                value={getInputValue(formField.value)}
                 onChange={(e) => {
-                  const value =
-                    field.type === 'number'
-                      ? Number(e.target.value)
-                      : field.type === 'date'
-                        ? new Date(e.target.value)
-                        : e.target.value
+                  const value = isNumberField(field)
+                    ? Number(e.target.value)
+                    : isDateField(field)
+                      ? new Date(e.target.value)
+                      : e.target.value
                   formField.onChange(value)
                 }}
-                type={field.type}
-                step={field.step}
-                min={field.min}
-                max={field.max}
-                placeholder={field.placeholder}
+                disabled={field.disabled}
               />
             )}
           </FormControl>
